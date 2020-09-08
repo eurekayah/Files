@@ -1,0 +1,30 @@
+<head><!-- Include Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>  
+
+<div id="myDiv">      <!-- Plotly chart will be drawn inside this DIV -->  </div>
+<script>    
+
+var trace = {          
+    x: ['Alpha', 'Beta', 'Gamma'],          
+    y: [100, 200, 500],          
+    type: 'bar',          
+    name: 'Opacity = 1',          
+    marker: { color: 'rgb(255, 0, 0)'}
+    };
+
+var trace2 = {          
+    x: ['Alpha', 'Beta', 'Gamma'],          
+    y: [100, 200, 500],          
+    type: 'bar',          
+    name: 'Opacity = 0.5',          
+    marker: { color: 'rgb(0, 255, 0)', opacity: 0.5 }
+    };
+
+var data = [ trace, trace2 ];  
+
+Plotly.newPlot('myDiv', data);
+</script>
+</body>

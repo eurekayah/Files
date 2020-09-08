@@ -1,0 +1,26 @@
+<head><!-- Include Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>  
+
+<div id="myDiv">      <!-- Plotly chart will be drawn inside this DIV -->  </div>
+<script>    
+
+var trace = {        
+    x: [1.5, 2.5, 3.5, 4.5, 5.5],        
+    y: [100, 10, 70, 150, 40],        
+    mode: 'lines+markers+text',        
+    type: 'bar',        
+    name: 'Alpha',        
+    text: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E'],        
+    textfont : { family:'Times New Roman'}, 
+    textposition: 'top', 
+    marker: { size: 12 } 
+    };
+
+var data = [ trace ];  
+
+Plotly.newPlot('myDiv', data);
+</script>
+</body>
