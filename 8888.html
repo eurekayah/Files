@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>數字 8 出現次數驗證器</title>
+    <style>
+        /* ----- 全域重置與基礎樣式 ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang TC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(145deg, #f5f7fb 0%, #e9edf4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        /* ----- 主卡片容器 ----- */
+        .container {
+            max-width: 820px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 40px;
+            padding: 40px 44px;
+            box-shadow:
+                0 20px 60px rgba(0, 20, 40, 0.12),
+                0 8px 24px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        /* ----- 標題區 ----- */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+
+        .header-icon {
+            font-size: 38px;
+            line-height: 1;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b1a33;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 span {
+            color: #e34b4b;
+            background: rgba(227, 75, 75, 0.10);
+            padding: 0 10px;
+            border-radius: 12px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            font-size: 17px;
+            color: #3d506c;
+            margin-top: 6px;
+            font-weight: 450;
+            background: rgba(60, 100, 200, 0.06);
+            padding: 8px 18px;
+            border-radius: 30px;
+            display: inline-block;
+            border: 1px solid rgba(60, 100, 200, 0.10);
+        }
+
+        /* ----- 問題區 ----- */
+        .question-box {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8edf9 100%);
+            border-radius: 24px;
+            padding: 22px 28px;
+            margin-bottom: 32px;
+            border-left: 6px solid #3b7bff;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .question-box p {
+            font-size: 20px;
+            font-weight: 500;
+            color: #0b1a33;
+            line-height: 1.6;
+        }
+
+        .question-box .highlight {
+            color: #e34b4b;
+            font-weight: 700;
+            font-size: 22px;
+        }
+
+        .question-box .note {
+            font-size: 16px;
+            font-weight: 400;
+            color: #4a5f7c;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 6px 16px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        /* ----- 區塊標題 ----- */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0b1a33;
+            margin: 28px 0 16px 0;
+        }
+
+        .section-title .emoji {
+            font-size: 26px;
+        }
+
+        .section-title .badge {
+            font-size: 14px;
+            font-weight: 600;
+            background: #3b7bff;
+            color: #fff;
+            padding: 2px 14px;
+            border-radius: 40px;
+            margin-left: 6px;
+        }
+
+        /* ----- 數學推導卡片 ----- */
+        .math-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin: 8px 0 4px 0;
+        }
+
+        .math-item {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 18px 16px 16px 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: transform 0.15s ease;
+            text-align: center;
+        }
+
+        .math-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 123, 255, 0.20);
+        }
+
+        .math-item .position {
+            font-size: 15px;
+            font-weight: 600;
+            color: #3d506c;
+            letter-spacing: 0.5px;
+        }
+
+        .math-item .count {
+            font-size: 32px;
+            font-weight: 800;
+            color: #0b1a33;
+            line-height: 1.2;
+            margin: 4px 0;
+        }
+
+        .math-item .count .highlight-num {
+            color: #e34b4b;
+        }
+
+        .math-item .desc {
+            font-size: 13px;
+            color: #6a7e9e;
+            margin-top: 2px;
+            word-break: break-word;
+        }
+
+        .math-total {
+            background: linear-gradient(135deg, #1a2a4a 0%, #0b1a33 100%);
+            border-radius: 18px;
+            padding: 18px 20px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .math-total .label {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.5px;
+        }
+
+        .math-total .result {
+            font-size: 36px;
+            font-weight: 800;
+            color: #ffd866;
+            letter-spacing: 1px;
+        }
+
+        .math-total .result span {
+            font-size: 22px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.4);
+            margin-left: 6px;
+        }
+
+        /* ----- 程式驗證區 ----- */
+        .code-area {
+            background: #0d1a2b;
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin: 10px 0 6px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .code-area pre {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 15px;
+            color: #e4e9f2;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-area .comment {
+            color: #6a8ba0;
+        }
+        .code-area .keyword {
+            color: #ff7b9c;
+        }
+        .code-area .function {
+            color: #82b1ff;
+        }
+        .code-area .string {
+            color: #c3e88d;
+        }
+        .code-area .number {
+            color: #f78c6c;
+        }
+        .code-area .operator {
+            color: #89ddff;
+        }
+
+        /* ----- 驗證結果區 ----- */
+        .result-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin: 18px 0 4px 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+        }
+
+        .result-box .left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .result-box .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-box .status .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #3b7bff;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+
+        .result-box .status .dot.success {
+            background: #2ecc71;
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.15);
+            }
+        }
+
+        .result-box .status .label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #3d506c;
+        }
+
+        .result-box .status .value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0b1a33;
+        }
+
+        .result-box .status .value .highlight-num {
+            color: #e34b4b;
+        }
+
+        .result-box .meta {
+            font-size: 14px;
+            color: #6a7e9e;
+            background: #f0f3f9;
+            padding: 6px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-box .meta .time {
+            font-weight: 600;
+            color: #0b1a33;
+        }
+
+        /* ----- 結論區 ----- */
+        .conclusion {
+            margin-top: 32px;
+            padding: 20px 28px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 24px;
+            border-left: 6px solid #2ecc71;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .conclusion .text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a3a2a;
+        }
+
+        .conclusion .text .big {
+            font-size: 32px;
+            font-weight: 800;
+            color: #0b1a33;
+        }
+
+        .conclusion .check {
+            font-size: 42px;
+            line-height: 1;
+        }
+
+        /* ----- 重新驗證按鈕 ----- */
+        .btn-verify {
+            background: #0b1a33;
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 16px rgba(11, 26, 51, 0.20);
+            margin-top: 6px;
+        }
+
+        .btn-verify:hover {
+            background: #1a2a4a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(11, 26, 51, 0.25);
+        }
+
+        .btn-verify:active {
+            transform: translateY(0px);
+            box-shadow: 0 4px 12px rgba(11, 26, 51, 0.15);
+        }
+
+        .btn-verify .icon {
+            font-size: 20px;
+        }
+
+        /* ----- 底部 ----- */
+        .footer {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 14px;
+            color: #8a9bb8;
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+            padding-top: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ----- 響應式設計 ----- */
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px 18px;
+                border-radius: 28px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+            .header-icon {
+                font-size: 30px;
+            }
+
+            .question-box p {
+                font-size: 17px;
+            }
+            .question-box .highlight {
+                font-size: 19px;
+            }
+
+            .math-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .math-item .count {
+                font-size: 26px;
+            }
+
+            .math-total {
+                flex-direction: column;
+                text-align: center;
+            }
+            .math-total .result {
+                font-size: 30px;
+            }
+
+            .result-box {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .result-box .left {
+                justify-content: center;
+            }
+            .result-box .meta {
+                justify-content: center;
+            }
+
+            .conclusion {
+                flex-direction: column;
+                text-align: center;
+            }
+            .conclusion .text {
+                font-size: 17px;
+            }
+            .conclusion .text .big {
+                font-size: 26px;
+            }
+
+            .code-area pre {
+                font-size: 13px;
+            }
+
+            .btn-verify {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .math-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ====== 標題 ====== -->
+        <div class="header">
+            <div class="header-icon">🔢</div>
+            <div>
+                <h1>數字 <span>8</span> 出現次數驗證器</h1>
+                <div class="subtitle">從 1 數到 1000 · 精確計算</div>
+            </div>
+        </div>
+
+        <!-- ====== 問題 ====== -->
+        <div class="question-box">
+            <p>
+                📝 從數字 <strong>1</strong> 一直數到 <strong>1000</strong> 的過程中，<br />
+                總共會出現幾個數字 <span class="highlight">8</span> 呢？
+            </p>
+            <div class="note">💡 例如：「88」包含了 2 個 8</div>
+        </div>
+
+        <!-- ====== 數學推導 ====== -->
+        <div class="section-title">
+            <span class="emoji">📐</span> 數學推導
+            <span class="badge">按位統計</span>
+        </div>
+
+        <div class="math-grid" id="mathGrid">
+            <div class="math-item">
+                <div class="position">🔵 個位</div>
+                <div class="count"><span class="highlight-num">100</span></div>
+                <div class="desc">8, 18, 28, … , 998</div>
+            </div>
+            <div class="math-item">
+                <div class="position">🟢 十位</div>
+                <div class="count"><span class="highlight-num">100</span></div>
+                <div class="desc">80–89, 180–189, … , 980–989</div>
+            </div>
+            <div class="math-item">
+                <div class="position">🟠 百位</div>
+                <div class="count"><span class="highlight-num">100</span></div>
+                <div class="desc">800–899</div>
+            </div>
+        </div>
+
+        <div class="math-total">
+            <span class="label">📊 總計（數學推導）</span>
+            <span class="result">
+                300
+                <span>次</span>
+            </span>
+        </div>
+
+        <!-- ====== 程式驗證 ====== -->
+        <div class="section-title" style="margin-top: 36px;">
+            <span class="emoji">💻</span> 程式驗證
+            <span class="badge">JavaScript</span>
+        </div>
+
+        <div class="code-area">
+            <pre>
+                <span class="comment">// 從 1 到 1000 統計數字 8 出現次數</span>
+                <span class="keyword">function</span> <span class="function">countDigit8</span>(<span class="function">n</span>) {
+                <span class="keyword">let</span> total = <span class="number">0</span>;
+                <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i &lt;= n; i++) {
+                <span class="keyword">const</span> str = i.<span class="function">toString</span>();
+                <span class="keyword">for</span> (<span class="keyword">const</span> ch <span class="keyword">of</span> str) {
+                <span class="keyword">if</span> (ch === <span class="string">'8'</span>) total++;
+                }
+                }
+                <span class="keyword">return</span> total;
+                }
+
+                <span class="comment">// 執行驗證</span>
+                <span class="keyword">const</span> result = <span class="function">countDigit8</span>(<span class="number">1000</span>);
+                <span class="comment">// result === 300 ✅</span>
+            </pre>
+        </div>
+
+        <!-- 驗證結果 -->
+        <div class="result-box" id="resultBox">
+            <div class="left">
+                <div class="status">
+                    <span class="dot success" id="statusDot"></span>
+                    <span class="label">驗證結果：</span>
+                    <span class="value" id="resultValue">
+                        計算中...
+                    </span>
+                </div>
+            </div>
+            <div class="meta">
+                ⏱️ 耗時 <span class="time" id="execTime">—</span> ms
+            </div>
+        </div>
+
+        <button class="btn-verify" id="verifyBtn">
+            <span class="icon">🔄</span> 重新驗證
+        </button>
+
+        <!-- ====== 結論 ====== -->
+        <div class="conclusion">
+            <div class="text">
+                ✅ 從 1 到 1000，數字 <strong>8</strong> 總共出現了
+                <span class="big" id="conclusionNumber">300</span> 次
+            </div>
+            <div class="check">🎯</div>
+        </div>
+
+        <!-- ====== 底部 ====== -->
+        <div class="footer">
+            ✦ 數學推導 ＋ 程式驗證 雙重確認 ✦
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ----- DOM 參考 -----
+            const resultValue = document.getElementById('resultValue');
+            const execTime = document.getElementById('execTime');
+            const statusDot = document.getElementById('statusDot');
+            const conclusionNumber = document.getElementById('conclusionNumber');
+            const verifyBtn = document.getElementById('verifyBtn');
+
+            // ----- 核心計算函式（精確） -----
+            function countDigit8(n) {
+                let total = 0;
+                for (let i = 1; i <= n; i++) {
+                    let num = i;
+                    while (num > 0) {
+                        if (num % 10 === 8) total++;
+                        num = Math.floor(num / 10);
+                    }
+                    // 注意：i = 0 不會出現，但 i = 1000 時，while 循環會處理
+                    // 1000 % 10 = 0, 100 % 10 = 0, 10 % 10 = 0, 1 % 10 = 1 → 不包含 8
+                }
+                return total;
+            }
+
+            // ----- 執行驗證並更新 UI -----
+            function runVerification() {
+                // 顯示計算中
+                resultValue.textContent = '計算中...';
+                resultValue.style.color = '#3d506c';
+                statusDot.className = 'dot';
+                execTime.textContent = '—';
+
+                // 使用 requestAnimationFrame 讓 UI 更新
+                requestAnimationFrame(() => {
+                    // 延遲一小段時間，確保 UI 已刷新
+                    setTimeout(() => {
+                        const start = performance.now();
+                        const result = countDigit8(1000);
+                        const end = performance.now();
+                        const elapsed = (end - start).toFixed(2);
+
+                        // 更新結果
+                        resultValue.textContent = `${result} 次`;
+                        resultValue.style.color = '#0b1a33';
+                        statusDot.className = 'dot success';
+                        execTime.textContent = elapsed;
+                        conclusionNumber.textContent = result;
+
+                        // 如果結果是 300，加一個小動畫效果（閃爍）
+                        if (result === 300) {
+                            resultValue.style.transition = 'transform 0.15s ease';
+                            resultValue.style.transform = 'scale(1.08)';
+                            setTimeout(() => {
+                                resultValue.style.transform = 'scale(1)';
+                            }, 200);
+                        }
+                    }, 80);
+                });
+            }
+
+            // ----- 頁面載入時自動驗證 -----
+            runVerification();
+
+            // ----- 按鈕重新驗證 -----
+            verifyBtn.addEventListener('click', runVerification);
+
+            // ----- 額外：在控制台輸出詳細資訊 -----
+            console.log('🔢 數字 8 出現次數驗證器已載入');
+            console.log('📐 數學推導：個位 100 次 + 十位 100 次 + 百位 100 次 = 300 次');
+            console.log('💻 點擊「重新驗證」按鈕可再次執行 JavaScript 計算');
+
+            // 也提供一個全域函數供開發者測試
+            window.countDigit8 = countDigit8;
+
+        })();
+    </script>
+
+</body>
+</html>
